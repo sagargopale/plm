@@ -1,6 +1,7 @@
 package actors
 
 import akka.actor.Actor
+
 import play.api._
 import collection.JavaConversions._
 import microsoft.exchange.webservices.data._
@@ -9,7 +10,6 @@ import play.api.Play.current
 
 
 import models._
-
 
 class EmailSyncActor extends Actor {
   
@@ -22,7 +22,6 @@ class EmailSyncActor extends Actor {
 	      val credentials = new WebCredentials(u.username, u.password, "")
 	      service.setCredentials(credentials)
 	      service.setUrl(new URI(u.serverURI))
-	      
 	      val view = new ItemView(50)
 	      val results = service.findItems(WellKnownFolderName.Inbox, view)
 	      val subjectList = results.getItems().foreach {
@@ -33,5 +32,4 @@ class EmailSyncActor extends Actor {
 	          Email.save(e)
 	      }
 	  }
-
 }

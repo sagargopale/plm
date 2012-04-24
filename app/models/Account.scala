@@ -21,5 +21,5 @@ object Account {
     private lazy val db = MongoDB.collection("accounts", classOf[Account], classOf[String])
     def save(user: Account) { db.save(user) }
     def findById(id: String) = Option(db.findOneById(id))
-    def findByEmail(email: String) = db.find().is("email", email).toArray.toList.headOption
+    def findByEmail(email: String) = db.find().is("email", email).limit(1).toArray.headOption
 }

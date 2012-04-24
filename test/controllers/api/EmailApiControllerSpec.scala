@@ -36,6 +36,20 @@ class EmailApiControllerSpec extends Specification {
 				}
 			}
 			
+			"return an error if sending invalid parameters" in {
+			  running(FakeApplication()) {
+			  val map = Map("Content-Type" -> Seq("application/json"))
+			  val paramMap = Map("from" -> "hdhir@grassycreek.nl", "to" -> "sagar.gopale@zuneeue.com", "cc" -> "pratik.gdk@gmail.com", "bcc" -> "pratik.gdk@gmail.com", "subject" -> "Test for Sending Email", "body" -> "Body of Email")
+			  val content = new AnyContentAsJson(toJson(paramMap))
+			  val result = EmailApiController.send(FakeRequest(POST, "", new play.api.test.FakeHeaders(map), content.asJson.head))
+			  
+			  status(result) must equalTo(OK)
+			  contentType(result) must beSome("application/json")
+			  val data = parse(contentAsString(result))
+			  (data \ "status") must be equalTo(toJson("error"))  
+			}
+		}
+			
 			"return a success response in case of valid authentication parameters" in {
 					running(FakeApplication(additionalConfiguration = inMemoryDatabase())) {
 					  val map = Map("Content-Type" -> Seq("application/json"))
@@ -44,7 +58,7 @@ class EmailApiControllerSpec extends Specification {
 					  val result = EmailApiController.setup(FakeRequest(POST, "", new play.api.test.FakeHeaders(map), content.asJson.head))
 					  
 					  // sleep for the thread so that the actor can do its job.
-					  Thread.sleep(10000L)
+					  Thread.sleep(4000L)
 					  status(result) must equalTo(OK)
 					  contentType(result) must beSome("application/json")
 					  val data = parse(contentAsString(result))
@@ -62,5 +76,7 @@ class EmailApiControllerSpec extends Specification {
 			    (data \ "status") must be equalTo(toJson("error"))
 			  }
 			} 
-	}
+			
+			
+  	}
 }
