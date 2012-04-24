@@ -6,3 +6,4 @@ tmp
 .history
 .cache
 .classpath
+.DS_Store
