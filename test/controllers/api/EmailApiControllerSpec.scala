@@ -9,6 +9,7 @@ import play.api.libs.json.Json._
 import play.api.mvc.AnyContentAsJson
 import org.junit.runner.RunWith
 import org.specs2.runner.JUnitRunner
+import play.api.libs.ws.WS
 
 @RunWith(classOf[JUnitRunner])
 class EmailApiControllerSpec extends Specification {
@@ -35,20 +36,6 @@ class EmailApiControllerSpec extends Specification {
 					  (data \ "status") must be equalTo(toJson("error"))
 				}
 			}
-			
-			"return an error if sending invalid parameters" in {
-			  running(FakeApplication()) {
-			  val map = Map("Content-Type" -> Seq("application/json"))
-			  val paramMap = Map("from" -> "hdhir@grassycreek.nl", "to" -> "sagar.gopale@zuneeue.com", "cc" -> "pratik.gdk@gmail.com", "bcc" -> "pratik.gdk@gmail.com", "subject" -> "Test for Sending Email", "body" -> "Body of Email")
-			  val content = new AnyContentAsJson(toJson(paramMap))
-			  val result = EmailApiController.send(FakeRequest(POST, "", new play.api.test.FakeHeaders(map), content.asJson.head))
-			  
-			  status(result) must equalTo(OK)
-			  contentType(result) must beSome("application/json")
-			  val data = parse(contentAsString(result))
-			  (data \ "status") must be equalTo(toJson("error"))  
-			}
-		}
 			
 			"return a success response in case of valid authentication parameters" in {
 					running(FakeApplication(additionalConfiguration = inMemoryDatabase())) {
@@ -77,6 +64,18 @@ class EmailApiControllerSpec extends Specification {
 			  }
 			} 
 			
-			
+			"return an error if sending invalid parameters" in {
+			  running(FakeApplication()) {
+			  val map = Map("Content-Type" -> Seq("application/json"))
+			  val paramMap = Map("from" -> "hdhir@grassycreek.nl", "to" -> "sagar.gopale@zuneeue.com", "cc" -> "pratik.gdk@gmail.com", "bcc" -> "pratik.gdk@gmail.com", "subject" -> "Test for Sending Email", "body" -> "Body of Email")
+			  val content = new AnyContentAsJson(toJson(paramMap))
+			  val result = EmailApiController.send(FakeRequest(POST, "", new play.api.test.FakeHeaders(map), content.asJson.head))
+			  
+			  status(result) must equalTo(OK)
+			  contentType(result) must beSome("application/json")
+			  val data = parse(contentAsString(result))
+			  (data \ "status") must be equalTo(toJson("error"))  
+			}
+		}
   	}
 }
